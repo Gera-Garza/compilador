@@ -13,288 +13,155 @@ precedence = (
 )
 
 
-def p_program(p):
-    """
-program : vars  programA
-    | programA
-"""
-    print("program")
-
-
-def p_programA(p):
-    """
-programA : function programC
-         | main
-"""
-    print("program")
-
-# declaracion de variales lista
-
-
-def p_vars(p):
-    """
-vars : VARS L_BRACE varsB R_BRACE
-"""
-
-# declaracion de variables sencilla y llamada a multiple
-
-
-def p_varsB(p):
-    """
-varsB : type  varsC SEMICOLON
-      | type  varsC SEMICOLON varsB
-"""
-
-# delcaracion de llamada multiple
-
-
-def p_varsC(p):
-    """
-varsC : var
-      | var COMMA varsC
-"""
-
-
-def p_function(p):
-    """
-function : FUNCTION func_type ID L_PARENTHESISENTHESISENTHESIS functionB R_PARENTHESIS  block
-"""
-
-
-def p_functionB(p):
-    """
-functionB : params
-      | empty
-"""
-
-
-def p_main(p):
-    """
-main : MAIN np_set_curr_proc np_GOTO_END L_PARENTHESISENTHESIS R_PARENTHESIS block
-"""
-
-
-def p_type(p):
-    """
-type : INT
-      | FLOAT
-      | BOOL
-      | CHAR
-      | STRING
-"""
-
-
-def p_var(p):
-    """
-var : ID L_BRACKET CTE_INT R_BRACKET
-    | ID
-"""
-
-
-def p_vector(p):
-    """
-vector : ID L_BRACKET CONST_INT R_BRACKET
-"""
-
-
-def p_func_type(p):
-    """
-func_type : VOID
-          | type
-"""
-
-
-def p_block(p):
-    """
-block : L_BRACE block2 block3 R_BRACE
-
-block2 : vars
-        | empty
-
-block3 : empty
-       | statement block3
-"""
-
-
-def p_params(p):
-    """
-params : param2
-       | param2 COMMA params
-
-param2 : type var
-"""
-
-
-def p_statement(p):
-    """
-statement : assign
-       | condicional
-       | read
-       | write
-       | loop_cond
-       | loop_range
-       | return
-       | func_call
-"""
-
-
-def p_assign(p):
-    """
-assign : var oper_assign  expression SEMICOLON
-"""
-
-
-def p_special_func(p):
-    """
-special_func : LENGTH L_PARENTHESISENTHESIS vector R_PARENTHESIS
-        | MIN L_PARENTHESISENTHESIS vector R_PARENTHESIS
-        | MAX L_PARENTHESISENTHESIS vector R_PARENTHESIS
-        | AVG L_PARENTHESISENTHESIS vector R_PARENTHESIS
-        | MODA L_PARENTHESISENTHESIS vector R_PARENTHESIS
-        | VARIANCE L_PARENTHESISENTHESIS vector R_PARENTHESIS
-        | SUM L_PARENTHESIS vector R_PARENTHESIS
-"""
-
-
-def p_condicional(p):
-    """
-condicional : IF L_PARENTHESIS expression  R_PARENTHESIS THEN block cond2
-
-cond2 : ELSE block
-      | empty
-"""
-
-
-def p_read(p):
-    """
-read : READ L_PARENTHESIS read2 R_PARENTHESIS SEMICOLON
-
-read2 : var
-      | var COMMA read2
-"""
-
-
-def p_write(p):
-    """
-write : WRITE L_PARENTHESIS write2 R_PARENTHESIS SEMICOLON
-
-write2 : expression write3
-       | letrero write3
-
-write3 : COMMA write2
-       | empty
-"""
-
-
-def p_while_loop(p):
-    """
-loop_cond : WHILE L_PARENTHESIS expression R_PARENTHESIS DO block
-"""
-
-
-def p_for_loop(p):
-    """
-loop_range : FOR var EQUAL exp TO exp DO block
-"""
-
-
-def p_return(p):
-    """
-return : RETURN L_PARENTHESIS exp R_PARENTHESIS SEMICOLON
-"""
-
-
-def p_func_call(p):
-    """
-func_call : ID L_PARENTHESIS func_callB R_PARENTHESIS
-
-func_callB : exp
-      | COMMA exp func_callB
-      | empty
-"""
-
-
-def p_expression(p):
-    """
-expression : not logic expression2
-
-expression2 : OR expression
-      | AND expression
-      | empty
-"""
-
-
-def p_logic(p):
-    """
-logic : exp logic2
-
-logic2 : LESS_THAN exp
-     | GREATER_THAN  exp
-     | LESS_THAN  exp
-     | EQUALS_TO  exp
-     | DIFF_THAN   exp
-     | empty
-"""
-
-
-def p_exp(p):
-    """
-exp : term exp2
-
-exp2 : PLUS exp
-     | MINUS  exp
-     | empty
-"""
-
-
-def p_term(p):
-    """
-term : factor term2
-
-term2 : MULT  term
-      | DIV  term
-      | empty
-"""
-
-
-def p_factor(p):
-    """
-factor : exponent factorB
-
-factorB : EXP factor
-        | empty
-"""
-
-
-def p_exponent(p):
-    """
-exponent : L_PARENTHESIS expression R_PARENTHESIS
-    | exponent2
-
-exponent2 : PLUS var_cte
-    | MINUS var_cte
-    | var_cte
-"""
-
-
-def p_var_cte(p):
-    """
-var_cte : var
-     | CONST_INT
-     | CONST_FLOAT
-     | CONST_CHAR
-     | LETRERO
-"""
-
-
-def p_error(p):
-    print("Syntax error found at line {0} around '{1}'", p)
-
-
-def p_empty(p):
-    """
-empty :
-"""
+quads = []
+dirVar = {}
+tabla = TablaVars()
+psaltos = []
+
+
+def t_program(t):
+
+    if len(t) == 2 and t[1]:
+        t[0] = {}
+        line, stat = t[1]
+        t[0][line] = stat
+    elif len(t) == 3:
+        t[0] = t[1]
+        if not t[0]:
+            t[0] = {}
+        if t[2]:
+            line, stat = t[2]
+            t[0][line] = stat
+
+
+def p_program_error(t):
+    '''program : error'''
+    t[0] = None
+    t.parser.error = 1
+
+
+def p_program(t):
+    print(quads)
+
+
+def t_vars(t):
+    global numInt, numFloat, numTxt
+    if t[1] == 'INT':
+        tabla.addVar(t[1], t[2], numInt)
+        memo.enteros.append(numInt)
+        numInt += 1
+    elif t[1] == 'FLOAT':
+        tabla.addVar(t[1], t[2], numFloat)
+        memo.flotantes.append(numFloat)
+        numFloat += 1
+    else:
+        tabla.addVar(t[1], t[2], numTxt)
+        memo.text.append(numTxt)
+        numTxt += 1
+
+
+def t_varst(t):
+    global numIntT, numFloatT, numtxtT
+    if t[1] == 'INT':
+        tabla.addVar(t[1], t[2], numIntT)
+        memo.ent_temp.append(numIntT)
+        numIntT += 1
+    elif t[1] == 'FLOAT':
+        tabla.addVar(t[1], t[2], numFloatT)
+        memo.flot_temp.append(numFloatT)
+        numFloatT += 1
+    else:
+        tabla.addVar(t[1], t[2], numtxtT)
+        memo.text_temp.append(numtxtT)
+        numtxtT += 1
+
+
+def t_tipo(t):
+    t[0] = t[1]
+    pass
+
+
+def t_asignacion(t):
+    global quads
+    quads = quads + [(memo.constantes[33], t[3], t[1])]
+    pass
+
+
+def t_lectura(t):
+    global quads
+    quads = quads + [(memo.especiales[4], t[3], t[1])]
+    pass
+
+
+def t_exp(t):
+    global numIntT, quads
+    if(len(t) == 2):
+        t[0] = t[1]
+    elif(t[2] == "&&"):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[5], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    else:
+        # ||
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[6], t[1], t[3], numIntT)]
+        t[0] = numIntT
+
+
+def t_exOp(t):
+    global numIntT, quads
+    if(len(t) == 2):
+        t[0] = t[1]
+    elif(t[2] == "<"):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[7], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    elif(t[2] == ">"):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[8], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    elif(t[2] == "=="):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[9], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    else:
+        #!=
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[10], t[1], t[3], numIntT)]
+        t[0] = numIntT
+
+
+def t_exOp(t):
+    global numIntT, quads
+    if(len(t) == 2):
+        t[0] = t[1]
+    elif(t[2] == "*"):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[40], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    elif(t[2] == "/"):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[41], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    elif(t[2] == "+"):
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[42], t[1], t[3], numIntT)]
+        t[0] = numIntT
+    else:
+        # -
+        numIntT += 1
+        memo.ent_temp.append(numIntT)
+        quads = quads + [(memo.especiales[43], t[1], t[3], numIntT)]
+        t[0] = numIntT
 
 
 # Build the parser
