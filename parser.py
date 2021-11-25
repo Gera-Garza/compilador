@@ -15,7 +15,18 @@ precedence = (
 
 quads = []
 dirVar = {}
+memo = memoria()
 tabla = TablaVars()
+numInt = 500
+numIntT = 600
+numFloat = 750
+numFloatT = 850
+numchar = 900
+numcharT = 1000
+numTxt = 1100
+numtxtT = 1200
+pointT = 1300
+n = 0
 psaltos = []
 
 
